@@ -6,6 +6,8 @@ from collections import Counter
 df = pd.read_csv("TwintCBDWorkfile.csv")
 
 
+randomtext = "$DCGD, already heading to big boom for 25Bil merger CBD banking and dis"
+
 def clean_up():
     # drops all the unnecessary columns
     df.drop(["id", "conversation_id", "created_at", "user_id", "quote_url", "place", "mentions", "urls", "photos",
@@ -35,10 +37,33 @@ def top_5_retweeted():
     print(nrdf[["username", "tweet", "retweets_count"]])
 
 
+def special_character_cleaning(str_to_clean):
+    # cleans a string from all alphanumerical characters
+
+    working_list = []
+    clean_str: str = ""
+
+    for i in str_to_clean:
+        if i.isalnum() or i == " ":
+            working_list.append(i)
+    clean_str = clean_str.join(working_list)
+    return clean_str
+
+
 def keyword_counter():
     keyword_count = {}
+    all_words = []
+
+    # cleaning all the tweets from special characters
+    clean_tweets_list = []
+    clean_tweets_str: str = ""
     for i in df.tweet:
-        str(df.tweet[i]).split(" ")
+        clean_tweets_list.append(special_character_cleaning(i))
+    clean_tweets_str = clean_tweets_str.join(clean_tweets_list)
+
+
+
+
 
 
 def run_all():
