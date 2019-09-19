@@ -41,7 +41,6 @@ def keyword_counter():
         str(df.tweet[i]).split(" ")
 
 
-
 def run_all():
     clean_up()
     tweet_counter()
