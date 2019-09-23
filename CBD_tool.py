@@ -2,15 +2,14 @@ import pandas as pd
 from collections import Counter
 
 # importing the CSV
-from pandas import DataFrame
-
 df = pd.read_csv("TwintCBDWorkfile.csv")
+
+# creating empty data frames to merge after they have been filled
 final_df: DataFrame = pd.DataFrame(columns=['X', 'Y', 'Z'])
 top_5_liked_df: DataFrame = pd.DataFrame(columns=['X', 'Y', 'Z'])
-topfiver_df: DataFrame = pd.DataFrame(columns=['X', 'Y', 'Z'])
+top_5_retweeted_df: DataFrame = pd.DataFrame(columns=['X', 'Y', 'Z'])
 most_active_accounts_df: DataFrame = pd.DataFrame(columns=['X', 'Y', 'Z'])
 
-# randomtext = "$DCGD, already heading to big boom for 25Bil merger CBD banking and dis"
 
 def clean_up():
     # drops all the unnecessary columns
@@ -38,7 +37,8 @@ def most_active_accounts():
 def top_5_retweeted():
     # prints the 5 tweets with the highest retweet count (username, tweet and likes count)
     nrdf = df.sort_values("retweets_count", ascending=False).head()
-    topfiver_df = nrdf[["username", "tweet", "retweets_count"]]
+    top_5_retweeted_df = nrdf[["username", "tweet", "retweets_count"]]
+    print(top_5_retweeted_df)
 
 
 def special_character_cleaning(str_to_clean):
@@ -55,6 +55,7 @@ def special_character_cleaning(str_to_clean):
 
 
 """def keyword_counter():
+    # not yet functional
     keyword_count = {}
     all_words = []
 
@@ -73,19 +74,18 @@ def export_to_csv():
         final_df.to_excel(writer, sheet_name="Analysis")
 
 
+def describe():
+    describe_df = df.describe(include="all")
+
+
 def run_all():
     clean_up()
     tweet_counter()
     top_5_liked()
     top_5_retweeted()
     most_active_accounts()
+    describe()
+    export_to_csv()
 
-
-def describe():
-    describe_df = df.describe(include="all")
 
 run_all()
-final_df.append(topfiver_df)
-# export_to_csv()
-
-print(final_df)
