@@ -79,7 +79,8 @@ most_active_accounts_df = most_active_accounts()
 describe_df = describe_all()
 tweet_count = tweet_counter()
 
-
-# print(top_5_retweeted_df, top_5_liked_df, most_active_accounts_df, describe_df, tweet_count)
-final_df = pd.concat([top_5_liked_df, top_5_retweeted_df], sort=False, ignore_index=True)
-export_to_csv()
+top_5_retweeted_df.rename(columns={"username": "A", "tweet": "B", "retweets_count": "C"})
+#final_df = pd.concat([top_5_liked_df, top_5_retweeted_df], sort=False, ignore_index=True)
+#final_df =
+#export_to_csv()
+print(top_5_retweeted_df)
