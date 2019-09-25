@@ -1,9 +1,15 @@
 import pandas as pd
+import xlsxwriter
 from collections import Counter
 
 
 # importing the CSV
 df = pd.read_csv("TwintCBDWorkfile.csv")
+
+
+# getting time stamps to be displayed on top of document
+date_created = df["date"][0]
+time_created = df["time"][0]
 
 
 def clean_up():
@@ -25,8 +31,7 @@ def top_5_liked():
 
 def most_active_accounts():
     # returns the 5 accounts with the most tweets including the hashtag/key word
-
-    return df.username.value_counts().head()
+    return df.username.value_counts().head().rename_axis('Username').reset_index(name='Number of Tweets')
 
 
 def top_5_retweeted():
@@ -35,7 +40,7 @@ def top_5_retweeted():
     return nrdf[["username", "tweet", "retweets_count"]]
 
 
-"""def keyword_counter():
+def keyword_counter():
     # not yet functional
     keyword_count = {}
     all_words = []
@@ -46,7 +51,6 @@ def top_5_retweeted():
     for i in df.tweet:
         clean_tweets_list.append(special_character_cleaning(i))
     clean_tweets_str = clean_tweets_str.join(clean_tweets_list)
-"""
 
 
 def special_character_cleaning(str_to_clean):
@@ -63,24 +67,41 @@ def special_character_cleaning(str_to_clean):
 
 
 def export_to_csv():
-    with pd.ExcelWriter('output.xlsx') as writer:
-        df.to_excel(writer, sheet_name='Tweets')
-        final_df.to_excel(writer, sheet_name="Analysis")
+    # setting the name
+    writer = pd.ExcelWriter("extra_output.xlsx", engine='xlsxwriter')
+
+    # actual data to be added
+    top_5_retweeted().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=6, index=False)
+    top_5_liked().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=15, index=False)
+    most_active_accounts().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=24, index=False)
+
+    # some more declarations - don't touch
+    workbook = writer.book
+    worksheet = writer.sheets["Sheet1"]
+
+    # declaring formats
+    bold = workbook.add_format({'bold': True})
+    caption = workbook.add_format({'bold': True, 'font_size': '16'})
+
+    # adding captions
+    worksheet.write('B2', "Date created:", bold)
+    worksheet.write('B3', "Time created:", bold)
+    worksheet.write('C2', date_created)
+    worksheet.write('C3', time_created)
+    worksheet.write('B5', 'Top 5 Retweeted', caption)
+    worksheet.write('B14', 'Top 5 Liked', caption)
+    worksheet.write('B23', 'Users with the most tweets', caption)
+
+    # formatting rows and coloumns
+    worksheet.set_column(0, 0, 5)  # Column  A   width set to 5.
+    worksheet.set_column(1, 1, 30)
+    worksheet.set_column(2, 2, 60)
+    worksheet.set_column(3, 3, 15)
 
 
-def describe_all():
-    return df.describe(include="all")
+    # closing the workbook
+    workbook.close()
 
 
 clean_up()
-top_5_retweeted_df = top_5_retweeted()
-top_5_liked_df = top_5_liked()
-most_active_accounts_df = most_active_accounts()
-describe_df = describe_all()
-tweet_count = tweet_counter()
-
-top_5_retweeted_df.rename(columns={"username": "A", "tweet": "B", "retweets_count": "C"})
-#final_df = pd.concat([top_5_liked_df, top_5_retweeted_df], sort=False, ignore_index=True)
-#final_df =
-#export_to_csv()
-print(top_5_retweeted_df)
+export_to_csv()
