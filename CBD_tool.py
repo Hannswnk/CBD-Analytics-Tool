@@ -11,6 +11,7 @@ date_created = df["date"][0]
 time_created = df["time"][0]
 
 
+
 def clean_up():
     # drops all the unnecessary columns
     df.drop(["id", "conversation_id", "created_at", "user_id", "quote_url", "place", "mentions", "urls", "photos",
@@ -70,13 +71,16 @@ def export_to_csv():
     writer = pd.ExcelWriter("extra_output.xlsx", engine='xlsxwriter')
 
     # actual data to be added
-    top_5_retweeted().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=8, index=False)
-    top_5_liked().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=17, index=False)
-    most_active_accounts().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=26, index=False)
+    top_5_retweeted().to_excel(writer, sheet_name='Analysis', startcol=1, startrow=8, index=False)
+    top_5_liked().to_excel(writer, sheet_name='Analysis', startcol=1, startrow=17, index=False)
+    most_active_accounts().to_excel(writer, sheet_name='Analysis', startcol=1, startrow=26, index=False)
 
     # some more declarations - don't touch
     workbook = writer.book
-    worksheet = writer.sheets["Sheet1"]
+    worksheet = writer.sheets["Analysis"]
+
+    df.to_excel(writer, sheet_name='Tweets')
+    worksheet2 = writer.sheets["Tweets"]
 
     # declaring formats
     bold = workbook.add_format({'bold': True})
@@ -105,6 +109,9 @@ def export_to_csv():
 
     # closing the workbook
     workbook.close()
+
+
+
 
 
 clean_up()
