@@ -79,6 +79,7 @@ def export_to_csv():
     workbook = writer.book
     worksheet = writer.sheets["Analysis"]
 
+    # adds a sheet with all tweets
     df.to_excel(writer, sheet_name='Tweets')
     worksheet2 = writer.sheets["Tweets"]
 
@@ -109,9 +110,6 @@ def export_to_csv():
 
     # closing the workbook
     workbook.close()
-
-
-
 
 
 clean_up()
