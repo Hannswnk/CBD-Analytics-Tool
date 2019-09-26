@@ -1,11 +1,10 @@
 import pandas as pd
 import xlsxwriter
+import subprocess
 from collections import Counter
 
-
 # importing the CSV
-df = pd.read_csv("TwintCBDWorkfile.csv")
-
+df = pd.read_csv("tweets.csv")
 
 # getting time stamps to be displayed on top of document
 date_created = df["date"][0]
@@ -71,9 +70,9 @@ def export_to_csv():
     writer = pd.ExcelWriter("extra_output.xlsx", engine='xlsxwriter')
 
     # actual data to be added
-    top_5_retweeted().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=6, index=False)
-    top_5_liked().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=15, index=False)
-    most_active_accounts().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=24, index=False)
+    top_5_retweeted().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=8, index=False)
+    top_5_liked().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=17, index=False)
+    most_active_accounts().to_excel(writer, sheet_name='Sheet1', startcol=1, startrow=26, index=False)
 
     # some more declarations - don't touch
     workbook = writer.book
@@ -82,15 +81,21 @@ def export_to_csv():
     # declaring formats
     bold = workbook.add_format({'bold': True})
     caption = workbook.add_format({'bold': True, 'font_size': '16'})
+    box = workbook.add_format({'border': 1, "border_color": "#000000"})
 
     # adding captions
     worksheet.write('B2', "Date created:", bold)
     worksheet.write('B3', "Time created:", bold)
     worksheet.write('C2', date_created)
     worksheet.write('C3', time_created)
-    worksheet.write('B5', 'Top 5 Retweeted', caption)
-    worksheet.write('B14', 'Top 5 Liked', caption)
-    worksheet.write('B23', 'Users with the most tweets', caption)
+    worksheet.write('B5', "Tweet Counter:", bold)
+    worksheet.write('C5', tweet_counter())
+    worksheet.write('B7', 'Top 5 Retweeted', caption)
+    worksheet.write('B16', 'Top 5 Liked', caption)
+    worksheet.write('B25', 'Users with the most tweets', caption)
+    worksheet.conditional_format('B9:D14', {'type': 'no_blanks', 'format': box})
+    worksheet.conditional_format('B27:D32', {'type': 'no_blanks', 'format': box})
+    worksheet.conditional_format('B18:D23', {'type': 'no_blanks', 'format': box})
 
     # formatting rows and coloumns
     worksheet.set_column(0, 0, 5)  # Column  A   width set to 5.
@@ -98,10 +103,12 @@ def export_to_csv():
     worksheet.set_column(2, 2, 60)
     worksheet.set_column(3, 3, 15)
 
-
     # closing the workbook
     workbook.close()
 
 
 clean_up()
 export_to_csv()
+
+# opens the file automatically
+subprocess.call([r'C:\Program Files (x86)\Microsoft Office\root\Office16\EXCEL.EXE', r"C:\Users\hanns\Desktop\CBD\CBD-Analytics-Tool\extra_output.xlsx"])
