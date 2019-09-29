@@ -6,10 +6,10 @@ from collections import Counter
 # importing the CSV
 df = pd.read_csv("tweets.csv")
 
+
 # getting time stamps to be displayed on top of document
 date_created = df["date"][0]
 time_created = df["time"][0]
-
 
 
 def clean_up():
